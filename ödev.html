@@ -188,47 +188,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Featured Products
     document.addEventListener("DOMContentLoaded", async () => {
-      const featuredCarouselInner = document.getElementById("featuredCarouselInner");
+  const featuredCarouselInner = document.getElementById("featuredCarouselInner");
 
-      try {
-        const res = await fetch('https://run.mocky.io/v3/918c1af2-8c20-4641-9e13-177b86b72569');
-        const dummyProducts = await res.json();
+  try {
+    const res = await fetch('https://run.mocky.io/v3/71c459d5-8844-4047-ba5d-3c2d94ac3acc');
+    const dummyProducts = await res.json();
 
-        const chunkSize = 5;
-        const productChunks = [];
-        for (let i = 0; i < dummyProducts.length; i += chunkSize) {
-          productChunks.push(dummyProducts.slice(i, i + chunkSize));
-        }
+    const chunkSize = 5;
+    const productChunks = [];
+    for (let i = 0; i < dummyProducts.length; i += chunkSize) {
+      productChunks.push(dummyProducts.slice(i, i + chunkSize));
+    }
 
-        productChunks.forEach((chunk, index) => {
-          const isActive = index === 0 ? "active" : "";
+    productChunks.forEach((chunk, index) => {
+      const isActive = index === 0 ? "active" : "";
 
-          const item = document.createElement("div");
-          item.className = `carousel-item ${isActive}`;
+      const item = document.createElement("div");
+      item.className = `carousel-item ${isActive}`;
 
-          let productsHTML = chunk.map(product => {
-            return `
-              <div class="col-md-2">
-                <div class="card">
-                  <img src="${product.img}" class="card-img-top" alt="${product.name}">
-                  <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
-                    <p class="card-text">${product.description}</p>
-                    <strong>${product.price}</strong>
-                    <button class="btn btn-danger">Add to cart</button>
-                  </div>
+      let productsHTML = chunk.map(product => {
+        // Rating yıldızlarını oluşturma
+        const ratingStars = product.rating
+          ? '<i class="fa fa-star"></i>'.repeat(Math.floor(product.rating)) + 
+            (product.rating % 1 >= 0.5 ? '<i class="fa fa-star-half-alt"></i>' : '') + 
+            '<i class="fa fa-star-o"></i>'.repeat(5 - Math.ceil(product.rating))
+          : '<i class="fa fa-star-o"></i>'.repeat(5); // Eğer rating gelmezse boş yıldız
+
+        return `
+          <div class="col-md-2 mb-4">
+            <div class="card">
+              <img src="${product.img}" class="card-img-top" alt="${product.name}">
+              <div class="card-body">
+                <h5 class="card-title">${product.name}</h5>
+                <p class="card-text">${product.description}</p>
+                <div class="ratings">
+                  ${ratingStars} <!-- Yıldızlar burada yer alacak -->
                 </div>
+                <strong>${product.price}</strong>
+                <button class="btn btn-danger">Add to cart</button>
               </div>
-            `;
-          }).join('');
+            </div>
+          </div>
+        `;
+      }).join('');
 
-          item.innerHTML = `<div class="row justify-content-center">${productsHTML}</div>`;
-          featuredCarouselInner.appendChild(item);
-        });
-      } catch (error) {
-        console.error("Ürünleri alırken hata oluştu:", error);
-      }
+      item.innerHTML = `<div class="row justify-content-center">${productsHTML}</div>`;
+      featuredCarouselInner.appendChild(item);
     });
+  } catch (error) {
+    console.error("Ürünleri alırken hata oluştu:", error);
+  }
+});
 
     // Elektronik Fırsatlar
     document.addEventListener("DOMContentLoaded", async () => {
